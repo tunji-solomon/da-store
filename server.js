@@ -12,10 +12,10 @@ dbConnect()
 // express middleware
 app.use(express.json())
 
-app.use('/da-store/', router)
+app.use('/', router)
 
 // home page
-app.get("/da-store", async (req, res)=>{
+app.get("/", async (req, res)=>{
     res.json({
         message: 'Welcome to our homepage'
     })
