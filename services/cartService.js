@@ -13,6 +13,7 @@ class CartService {
                 message: "Product with Id not found"
             })
         }
+        const checkAvailability =  await ProductRepo.productUpdateAfterPurchase
         let findIt;
         const product = {
             id:getProduct?.id,
