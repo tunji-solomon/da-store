@@ -8,7 +8,7 @@ class ProductRepo {
     
     findProductById =  async (id) => {
         try {
-            const product = await productModel.findById(id).select("-__v -createdAt -isAvailable -quantity")
+            const product = await productModel.findById(id).select("-__v -createdAt -quantity")
             return product
         } catch (error) {
             return null

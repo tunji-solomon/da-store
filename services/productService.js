@@ -26,17 +26,15 @@ class ProductService {
         res.json({
             message: 'succesful',
             data: {
-
                 products: productsPages,
                 page: page,
                 totalPages,
-
             }
         })
-
     }
 
     add = async (req, payload, res) => {
+
         if(payload.label){
             payload.label = payload.label.trim().charAt(0).toUpperCase() + payload.label.trim().slice(1)
         }
@@ -44,6 +42,10 @@ class ProductService {
         if(isProductExist){
             payload.quantity = Number(payload.quantity)
             payload.quantity += isProductExist?.quantity
+            if(isProductExist.isAvailable === false){
+                payload.quantity > 0 ? payload.isAvailable = true : false
+            }
+            
             await ProductRepo.updateProduct(payload.label,payload)
             return res.json({
                 message: 'product updated successfully'
@@ -53,17 +55,16 @@ class ProductService {
         const { imgUrl, publicId } = await uploadToCloudinary(req.file.path, res)
         payload.imgUrl = imgUrl;
         payload.publicId = publicId
-    
+
         const newProduct = await ProductRepo.addProduct(payload)
         res.json({
-    
             message: 'Product added succesfully',
             data: newProduct
         })
-
     }
 
     find = async (payload, res) => {
+
         let getProducts;
         const { label, price, isAvailable } = payload
 
@@ -74,8 +75,6 @@ class ProductService {
         }
 
         getProducts = await ProductRepo.findByParameterMany(payload)
-        let available;
-
         if(getProducts.length < 1) return res.json(`Your search query does not have any match.`)
 
         return res.json({
@@ -85,8 +84,8 @@ class ProductService {
     }
 
     update = async (payload, res) => {
-        let { label } = payload
 
+        let { label } = payload
         label = label.trim().charAt(0).toUpperCase() + label.trim().slice(1).toLowerCase()
 
         const productExist = await ProductRepo.findByParameterOne(label)
@@ -98,6 +97,7 @@ class ProductService {
         if(!updated) return res.status(500).json({
             message: 'Update of item failed, pleaae try again'
         })
+
         return res.status(201).json({
             message: `Item with label:${label} updated succesfully`
         })

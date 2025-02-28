@@ -4,6 +4,7 @@ const tools = require('../utils/tools')
 class UserService {
 
     create = async (payload, res) => {
+
         const { email, username, password } = payload
 
         if(!email && !username && !password){
@@ -38,6 +39,7 @@ class UserService {
     }
 
     getAllUser = async (res) => {
+
         const users = await AuthRepo.getAllUser()
         if(users.length < 1) {
             return res.json({
@@ -54,6 +56,7 @@ class UserService {
     }
 
     login = async (payload, res) => {
+
         const { username, password } = payload;
 
         const userExist = await AuthRepo.findByParameter(username)
@@ -70,8 +73,8 @@ class UserService {
                 message: "Invalid Credentials. please provide the correct password"
             })
         }
+
         const setActive = { isActive : true }
-        console.log("HERERERERE")
         await AuthRepo.update(userExist?.id, setActive)
 
         const token = tools.generateToken(
@@ -90,19 +93,7 @@ class UserService {
     }
 
     logout = async ( payload, res) => {
-        const { userId } = res.locals.user;
-        const user = AuthRepo.findUserById(userId);
-        const isActive = {isActive : false}
-        if(user?.isActive === true){
-            await AuthRepo.update(isActive)
-        }
-
-        tools.clearToken(payload)
         
-        return res.status(200).json({
-            status: 'Success',
-            message: 'User logged out'
-        })
     }
 }
 

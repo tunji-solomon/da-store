@@ -33,6 +33,7 @@ class cartRepo {
                 {userId: parameter},
             ]
         })
+  
     }
 
 
@@ -40,12 +41,17 @@ class cartRepo {
         const cartExist = await cartModel.findOne({userId:id}).select('-userId  -_id -__v')
         for(let i=0; i < cartExist.cart.length; i++){
             if(cartExist.cart[i].id  === payload.id){
-                cartExist.cart[i] = payload;
+                cartExist.cart[i] = {
+                    id : payload.id,
+                    label : payload.label,
+                    price : payload.price,
+                    quantity : payload.quantity
+                }
             }
 
              cartExist.cart[-1] = payload
         }
-        const total = cartExist.total + payload.price
+        const total = cartExist.total + payload.totalOrderPrice
         const update = cartExist?.cart;
         return await cartModel.updateOne({userId:id},
             {
@@ -62,9 +68,8 @@ class cartRepo {
         updateCart = existingCart?.cart.filter((item ) => {
             if(item.id === payload.id){
                 if(item.quantity > 1){
-                    item.quantity--
+                    item.quantity = item.quantity - payload.quantity
                 }else{
-
                     const newCart = existingCart.cart.splice(existingCart.cart.indexOf(item), 1)
                     return
 
@@ -73,7 +78,7 @@ class cartRepo {
             return item
             })
 
-        const total = existingCart?.total - payload.price
+        const total = existingCart?.total - (payload.price * payload.quantity)
         return await cartModel.updateOne({userId : id},
             {
                 cart : updateCart,

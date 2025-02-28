@@ -7,7 +7,7 @@ class CartController {
     addToCart = async (req, res) => {
 
         try {
-            const addProduct =  await CartService.addProduct(req.params, res)
+            const addProduct =  await CartService.addProduct(req.query, res)
             return addProduct; 
         } catch (error) {
             logger(error, res)          
@@ -27,10 +27,19 @@ class CartController {
     removeItem = async (req, res) => {
 
         try {
-            const removedItem = await cartService.removeItem(req.params, res)
+            const removedItem = await cartService.removeItem(req.query, res)
             return removedItem   
         } catch (error) {
             logger(error, res)                  
+        }
+    }
+
+    deleteCart = async (req, res) => {
+        try {
+            const delCart = await cartService.deleteCart(res);
+            return delCart
+        } catch (error) {
+            logger(error, res)
         }
     }
 }
