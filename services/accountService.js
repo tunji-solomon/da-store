@@ -55,9 +55,9 @@ class AccountService {
         })
 
         const getProduct = await ProductRepo.getAllProduct()
-        getProduct.forEach(product=> {
-            getCart.cart.find(async item=> {
-                if(product.id === item.id){
+        const check = getProduct.find(product=> {
+            for(let i = 0; i < getCart?.cart.length; i++){
+                if(product.id === getCart.cart[i].id){
                     if(product.isAvailable === false){
                         return res.status(400).json({
                             status: 'Failed',
@@ -65,50 +65,53 @@ class AccountService {
                         })
                     }
 
-                    if(product.quantity < item.quantity){
+                    if(product.quantity < getCart.cart[i].quantity){
                         return res.status(400).json({
                             message: `quantity of ${product.label} available is ${product.quantity}, Please adjust your order accordingly. Thank you`
                         })
                     }
+                }
+            }
+        })
+        
+        if(!check){
 
-                    const user = await AuthRepo.findUserById(userId)
-                    const userBalance = user?.balance
-                    if(userBalance === 0){
-                        return res.status(300).json({
-                            status: 'Failed',
-                            message: `Your balance is: $${userBalance}, top-up your account to continue.`
-                        })
+            const user = await AuthRepo.findUserById(userId)
+            const userBalance = user?.balance
+            if(userBalance === 0){
+                return res.status(300).json({
+                    status: 'Failed',
+                    message: `Your balance is: $${userBalance}, top-up your account to continue.`
+                })
+            }
+    
+            const totalAmount = getCart.total
+            if(userBalance < totalAmount) return res.status(200).json({
+                status: 'Failed',
+                message: `User balance: $${userBalance} not sufficient for Total payment:$${totalAmount}`
+            })
+    
+            payload.amount = userBalance - totalAmount
+            await CartRepo.deleteCart(getCart?.id)
+            await AuthRepo.update(userId,payload )
+    
+            getCart?.cart.map(async (item) =>{
+                for(let i = 0; i<getProduct.length; i++){
+                    if(item.id === getProduct[i].id){
+                        let update = {}
+                        update.quantity = getProduct[i].quantity - item.quantity
+                        update.quantity === 0 ? update.isAvailable = false : true
+                        await ProductRepo.updateProduct(getProduct[i].label, update)
                     }
-            
-                    const totalAmount = getCart.total
-                    if(userBalance < totalAmount) return res.status(200).json({
-                        status: 'Failed',
-                        message: `User balance: $${userBalance} not sufficient for Total payment:$${totalAmount}`
-                    })
-            
-                    payload.amount = userBalance - totalAmount
-                    await CartRepo.deleteCart(getCart?.id)
-                    await AuthRepo.update(userId,payload )
-
-                    getCart?.cart.find(async (item) =>{
-                        for(let i = 0; i<getProduct.length; i++){
-                            if(item.id === getProduct[i].id){
-                                let update = {}
-                                update.quantity = getProduct[i].quantity - item.quantity
-                                update.quantity === 0 ? update.isAvailable = false : true
-                                await ProductRepo.updateProduct(getProduct[i].label, update)
-                            }
-                        }
-                    })
-            
-                    return res.status(200).json({
-                        status: 'Success',
-                        message: 'Payment completed Successfully.',
-                        balance: payload.amount
-                    })  
                 }
             })
-        }) 
+    
+            return res.status(200).json({
+                status: 'Success',
+                message: 'Payment completed Successfully.',
+                balance: payload.amount
+            }) 
+        }
     }
 }
 
