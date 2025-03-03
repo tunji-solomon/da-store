@@ -94,14 +94,7 @@ class UserService {
     }
 
     logout = async (res) => {
-        
         const { token } = res.locals
-        if(!token){
-            return res.status(404).json({
-                satus: 'Failed',
-                message: "Authorization denied, No token in header"
-            })
-        }
 
         await AuthRepo.logout(token)
         return res.status(201).json({
