@@ -36,7 +36,7 @@ class AuthController {
     logout = async (req, res) => {
 
         try {
-            const user = await AuthService.logout(req,res)
+            const user = await AuthService.logout(res)
             return user
         } catch (error) {
             logger(error, res)           

@@ -1,3 +1,4 @@
+const { BlacklistModel } = require('../datasource/model')
 const { AuthRepo } = require('../repository/index')
 const tools = require('../utils/tools')
 
@@ -92,8 +93,21 @@ class UserService {
         })
     }
 
-    logout = async ( payload, res) => {
+    logout = async (res) => {
         
+        const { token } = res.locals
+        if(!token){
+            return res.status(404).json({
+                satus: 'Failed',
+                message: "Authorization denied, No token in header"
+            })
+        }
+
+        await AuthRepo.logout(token)
+        return res.status(201).json({
+            status: 'success',
+            message: 'User logged out succefully'
+        })
     }
 }
 

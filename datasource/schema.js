@@ -49,10 +49,18 @@ const cartSchema = new mongoose.Schema({
     cart: Array,
     total: Number,
     isCheckout: { type: Boolean, default : false }
-}, { timestamps : true })
+},
+
+{ timestamps : true })
+
+const blackListSchema = new mongoose.Schema({
+    token : String
+},
+{timestamps : true})
 
 module.exports = {
     productSchema,
     userSchema,
-    cartSchema
+    cartSchema,
+    blackListSchema
 }

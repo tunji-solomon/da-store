@@ -1,4 +1,4 @@
-const { userModel } = require('../datasource/model')
+const { userModel, BlacklistModel } = require('../datasource/model')
 
 class AuthRepo {
     
@@ -40,6 +40,10 @@ class AuthRepo {
 
             }
         ).select('username email balance')
+    }
+
+    logout = async (payload) => {
+        return await BlacklistModel.create({token : payload})
     }
 }
 

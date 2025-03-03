@@ -3,8 +3,10 @@ const productRoutes = require('./productRoute')
 const authRoutes =  require('./authRoutes')
 const accountRoutes = require('./accountRoutes')
 const cartRoutes = require('./cartRoutes')
+const { authMiddleware }= require('../middleware')
 const router = express.Router()
 
+router.use(authMiddleware.isLoggedOut)
 router.use('/auth', authRoutes);
 router.use('/product', productRoutes);
 router.use('/account',accountRoutes);

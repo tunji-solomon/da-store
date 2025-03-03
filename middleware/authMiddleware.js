@@ -1,5 +1,6 @@
 const { TokenExpiredError } = require('jsonwebtoken')
 const tools = require('../utils/tools')
+const { BlacklistModel } = require('../datasource/model')
 
 const verifyToken = async (req, res, next) => {
 
@@ -29,6 +30,19 @@ const verifyToken = async (req, res, next) => {
 
 }
 
+const isLoggedOut = async (req, res, next) => {
+    const token = tools.checkToken(req)
+    const isBlacklisted = await BlacklistModel.findOne({token : token})
+    if (isBlacklisted)return res.json({
+        message: 'Authorization denied, Log in to continue'
+    })
+
+    res.locals.token = token
+
+    next()
+}
+
 module.exports = {
-    verifyToken
+    verifyToken,
+    isLoggedOut
 }
