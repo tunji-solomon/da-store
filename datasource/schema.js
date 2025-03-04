@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema({
     },
     email: String,
     password: String,
+    role : { type : String, default : 'user'},
     balance: { type: Number, default: 0},
     isActive: { type : Boolean, default : false}
 }, { timestamps : true })

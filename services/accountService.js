@@ -96,7 +96,7 @@ class AccountService {
             await AuthRepo.update(userId,payload )
     
             getCart?.cart.map(async (item) =>{
-                for(let i = 0; i<getProduct.length; i++){
+                for(let i = 0; i < getProduct.length; i++){
                     if(item.id === getProduct[i].id){
                         let update = {}
                         update.quantity = getProduct[i].quantity - item.quantity

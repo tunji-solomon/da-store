@@ -81,7 +81,8 @@ class UserService {
         const token = tools.generateToken(
             {
                 username: userExist?.username,
-                userId : userExist?.id
+                userId : userExist?.id,
+                role : userExist.role
             },
             "1hr"    
         )

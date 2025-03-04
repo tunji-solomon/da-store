@@ -32,6 +32,9 @@ const verifyToken = async (req, res, next) => {
 
 const isLoggedOut = async (req, res, next) => {
     const token = tools.checkToken(req)
+    if(!token) return res.json({
+        message: "Authorization denied. No token in header."
+    })
     const isBlacklisted = await BlacklistModel.findOne({token : token})
     if (isBlacklisted)return res.json({
         message: 'Authorization denied, Log in to continue'
@@ -42,7 +45,20 @@ const isLoggedOut = async (req, res, next) => {
     next()
 }
 
+const isAdmin = async (req, res, next) => {
+    const { role } = res.locals.user;
+    if(role !== 'admin'){
+        return res.status(400).json({
+            message : "Cant acces this page. only an admin user can."
+        })
+    }
+
+    next()
+
+}
+
 module.exports = {
     verifyToken,
-    isLoggedOut
+    isLoggedOut,
+    isAdmin
 }
