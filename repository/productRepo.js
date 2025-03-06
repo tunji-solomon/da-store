@@ -106,6 +106,10 @@ class ProductRepo {
         return true
     }
 
+    delete = async (id) => {
+        return await productModel.findByIdAndDelete(id)
+    }
+
 }
 
 

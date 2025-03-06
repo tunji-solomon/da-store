@@ -64,6 +64,18 @@ class ProductController {
             logger(error, res)  
         }
     }
+
+    delete = async (req, res) => {
+        
+        try {
+            const deletedProduct = await productService.delete(req.params, res)
+            return deletedProduct
+            
+        } catch (error) {
+            logger(error, res)
+            
+        }
+    }
 }
 
 module.exports = new ProductController()

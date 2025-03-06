@@ -1,5 +1,6 @@
 const { ProductRepo }  = require('../repository/index');
-const { uploadToCloudinary } = require('../utils/cloudinaryHelper')
+const productRepo = require('../repository/productRepo');
+const { uploadToCloudinary, deleteCloudinary } = require('../utils/cloudinaryHelper')
 
 class ProductService {
 
@@ -52,6 +53,7 @@ class ProductService {
             })
         }
 
+        // upload image to cloudinary
         const { imgUrl, publicId } = await uploadToCloudinary(req.file.path, res)
         payload.imgUrl = imgUrl;
         payload.publicId = publicId
@@ -101,6 +103,26 @@ class ProductService {
         return res.status(201).json({
             message: `Item with label:${label} updated succesfully`
         })
+    }
+
+    delete = async (payload, res) => {
+        const { id } = payload
+        const isProductExist = await productRepo.findProductById(id)
+        if (!isProductExist) return res.status(400).json({
+            message : "Product with ID not found"
+        })
+
+        // delete from cloudinary
+        const clodinaryResult = await deleteCloudinary(isProductExist?.publicId, res)
+        if(!clodinaryResult) return res.status(500).json({
+            message : 'Something went wrong. Try gain'
+        })
+        await productRepo.delete(id)
+        return res.status(200).json({
+            status : "Success",
+            message : "Product deleted successfully"
+        })
+
     }
 }
 
