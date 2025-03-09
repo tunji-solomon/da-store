@@ -4,7 +4,7 @@ const { authMiddleware, multerMiddleware } = require('../middleware/index')
 const productController = require('../controller/productController')
 const router = express.Router()
 
-router.get('/', ProductController.getAll)
+router.get('/all', ProductController.getAll)
 router.get('/find',ProductController.find)
 router.use(authMiddleware.verifyToken, authMiddleware.isAdmin, multerMiddleware.single('image'))
 router.post('/add',ProductController.add)

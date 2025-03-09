@@ -12,14 +12,14 @@ dbConnect()
 // express middleware
 app.use(express.json())
 
-app.use('/', router)
-
 // home page
-app.get("/", async (req, res)=>{
+app.get("", async (req, res)=>{
     res.json({
         message: 'Welcome to our homepage'
     })
 })
+
+app.use('/', router)
 
 app.listen(PORT, () => {
     console.log(`App is running on port: ${PORT}`)
