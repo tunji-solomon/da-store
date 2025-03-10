@@ -1,7 +1,7 @@
-const { AccountController } = require("../controller/index")
-const { authMiddleware } = require('../middleware/index')
-
+const { AccountController } = require("../controller")
+const { authMiddleware } = require('../middleware')
 const express = require('express');
+
 const router = express.Router();
 
 router.get("/view-balance", authMiddleware.verifyToken, AccountController.viewBalance);

@@ -117,6 +117,7 @@ class ProductService {
         if(!clodinaryResult) return res.status(500).json({
             message : 'Something went wrong. Try gain'
         })
+        
         await productRepo.delete(id)
         return res.status(200).json({
             status : "Success",

@@ -1,7 +1,7 @@
 const express = require('express')
-const { ProductController }  = require('../controller/index')
-const { authMiddleware, multerMiddleware } = require('../middleware/index')
-const productController = require('../controller/productController')
+const { ProductController }  = require('../controller')
+const { authMiddleware, multerMiddleware } = require('../middleware')
+
 const router = express.Router()
 
 router.get('/all', ProductController.getAll)
