@@ -1,0 +1,1 @@
+export { default as ProductSchema } from './product-schema'
